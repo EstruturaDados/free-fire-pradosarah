@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_ITENS 10
+
+typedef struct {
+    char nome[30];
+    char tipo[20];
+    int quantidade;
+} Item;
+
+void adicionarItem(Item *itens, int *contador);
+void removerItem(Item *itens, int *contador);
+void listarItens(Item *itens, int contador);
+
+int main() {
+    Item itens[MAX_ITENS];
+    int contador = 0;
+    int opcao;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1 - Adicionar Item\n");
+        printf("2 - Remover Item\n");
+        printf("3 - Listar Itens\n");
+        printf("0 - Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpa o buffer
+
+        switch (opcao) {
+            case 1:
+                adicionarItem(itens, &contador);
+                break;
+            case 2:
+                removerItem(itens, &contador);
+                break;
+            case 3:
+                listarItens(itens, contador);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida.\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
+
+void adicionarItem(Item *itens, int *contador) {
+    if (*contador >= MAX_ITENS) {
+        printf("Mochila cheia! Não é possível adicionar mais itens.\n");
+        return;
+    }
+
+    printf("Digite o nome do item: ");
+    fgets(itens[*contador].nome, sizeof(itens[*contador].nome), stdin);
+    itens[*contador].nome[strcspn(itens[*contador].nome, "\n")] = 0; // Remove newline
+
+    printf("Digite o tipo do item: ");
+    fgets(itens[*contador].tipo, sizeof(itens[*contador].tipo), stdin);
+    itens[*contador].tipo[strcspn(itens[*contador].tipo, "\n")] = 0; // Remove newline
+
+    printf("Digite a quantidade: ");
+    scanf("%d", &itens[*contador].quantidade);
+    getchar(); // Limpa o buffer
+
+    (*contador)++;
+    printf("Item adicionado com sucesso!\n");
+}
+
+void removerItem(Item *itens, int *contador) {
+    char nome[30];
+    printf("Digite o nome do item a ser removido: ");
+    fgets(nome, sizeof(nome), stdin);
+    nome[strcspn(nome, "\n")] = 0; // Remove newline
+
+    for (int i = 0; i < *contador; i++) {
+        if (strcmp(itens[i].nome, nome) == 0) {
+            for (int j = i; j < *contador - 1; j++) {
+                itens[j] = itens[j + 1]; // Desloca os itens para a esquerda
+            }
+            (*contador)--;
+            printf("Item removido com sucesso!\n");
+            return;
+        }
+    }
+    printf("Item não encontrado.\n");
+}
+
+void listarItens(Item *itens, int contador) {
+    printf("\nItens na Mochila:\n");
+    printf("%-20s %-15s %-10s\n", "Nome", "Tipo", "Quantidade");
+    for (int i = 0; i < contador; i++) {
+        printf("%-20s %-15s %-10d\n", itens[i].nome, itens[i].tipo, itens[i].quantidade);
+    }
+}
